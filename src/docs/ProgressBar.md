@@ -42,10 +42,11 @@ breakpoints to the bar that will slow the animation when hit.
 
 ### Acceptance Criteria
 
-- update the progress bar to accept an array of "breakpoints" (**FYI not
-  css/media breakpints**) that affect the animation of the progress bar.
+- update the progress bar to accept an array of "breakpoints*" (**FYI not
+  css/media breakpoints**) that affect the animation of the progress bar.
   Progress should animate slower around breakpoints than between them. Each
   breakpoint will be provided as a number that represents a percentage
+  - **What is a breakpoint?** A breakpoint, in this context, is a point between 1% and 90% progress. 10, 25, 30, 65, 85 are all examples of breakpoints.
 - the total progress time can be longer than 15 seconds (if it makes the
   exercise easier)
 - allow the user to toggle between a progress bar with breakpoints and one
