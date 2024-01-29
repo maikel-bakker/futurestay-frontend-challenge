@@ -16,7 +16,7 @@ function App() {
             <h2 className="title">Exercises</h2>
             <ul className="exercise-links">
               <li>
-                <NavLink exact={true} to="/progress_bar">
+                <NavLink to="/progress_bar">
                   Progress Bar
                 </NavLink>
               </li>
