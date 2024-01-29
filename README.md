@@ -11,12 +11,13 @@ Any coding exercise here is meant to help Futurestay gain insight into how you w
 1. Clone the repo **(don't fork)**
 2. Point the remote origin to a new repo under your account 
 3. Install dependencies: `yarn`, and start the dev server: `yarn start`. The app should open on http://localhost:3000
-4. This will take you to an index that lists the exercises. For the given exercise:
-    - click the exercise link from the index page. This will take you to a Github Issue thread which includes instructions.
+4. This will take you to an index page that lists the exercise(s). For the given exercise:
+    - Click the exercise link from the index page.
     - v1:
-      - review the v1 specs to be fulfilled
+      - click on the link listed under "Specs". This will take you to a Github Issue thread which includes instructions.
+      - review the v1 specs to be fulfilled.
       - create a new branch off of master
-      - complete the `Solution` component for the exercise (the ProgressBar exercise is found in ProgressBar.js)
+      - complete the `Solution` component for the exercise (the ProgressBar solution space is found in src/progress-bar-exercise/progress-bar-exercise.js)
       - create a pull request on your repo when finished
     - v2:
       - review the v2 specs to be fulfilled
