@@ -2,16 +2,21 @@ import { useState, useRef } from 'react';
 
 /**
  * Calculate the progress percentage over a given duration
- * @param duration {number}
- * @param intervalTime {number}
- * @param maxProgress {number} - The maximum progress percentage before it completes
+ * @param [props] {object}
+ * @param [props.duration] {number}
+ * @param [props.intervalTime] {number}
+ * @param [props.maxProgress] {number} - The maximum progress percentage before it completes
+ * @param [props.breakpoints] {number[]} - whenever a breakpoint is reached, the progress increment is halved
+ * @param [props.breakpointMargin] {number} - the margin around a breakpoint where the progress increment is halved
  * @returns {{completeProgress: completeProgress, startProgress: startProgress, progress: number, resetProgress: resetProgress}}
  */
-export function useProgress(
+export function useProgress({
   duration = 15000,
   intervalTime = 100,
-  maxProgress = 90
-) {
+  maxProgress = 90,
+  breakpoints = [],
+  breakpointMargin = 5,
+} = {}) {
   const [progress, setProgress] = useState(0);
   const intervalRef = useRef(null);
 
@@ -25,7 +30,9 @@ export function useProgress(
       setProgress,
       duration,
       intervalTime,
-      maxProgress
+      maxProgress,
+      breakpoints,
+      breakpointMargin
     );
   };
 
@@ -57,14 +64,25 @@ function startProgressInterval(
   setProgress,
   duration,
   intervalTime,
-  maxProgress = 90
+  maxProgress,
+  breakpoints,
+  breakpointMargin
 ) {
   const totalSteps = duration / intervalTime;
   const increment = maxProgress / totalSteps;
 
   const interval = setInterval(() => {
     setProgress((prevProgress) => {
-      const nextProgress = Math.round(prevProgress + increment);
+      const isNearBreakpoint = breakpoints.some(
+        (breakpoint) =>
+          prevProgress + increment > breakpoint - breakpointMargin &&
+          prevProgress + increment < breakpoint + breakpointMargin
+      );
+
+      const nextProgress = isNearBreakpoint
+        ? prevProgress + increment / 2
+        : prevProgress + increment;
+
       if (nextProgress >= maxProgress) {
         clearInterval(interval);
         return maxProgress;

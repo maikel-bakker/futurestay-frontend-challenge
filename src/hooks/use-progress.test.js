@@ -7,16 +7,14 @@ describe('useProgress hook', () => {
   it('should start progress and reach maxProgress', () => {
     const duration = 5000;
     const maxProgress = 90;
-    const { result } = renderHook(() =>
-      useProgress(duration, 100, maxProgress)
-    );
+    const { result } = renderHook(() => useProgress({ duration, maxProgress }));
 
     act(() => {
       result.current.startProgress();
-      jest.advanceTimersByTime(duration); // Advance time by the duration of the progress
+      jest.advanceTimersByTime(duration);
     });
 
-    expect(result.current.progress).toBe(maxProgress);
+    expect(Math.round(result.current.progress)).toBe(maxProgress);
   });
 
   it('should complete progress immediately when completeProgress is called', () => {
@@ -46,21 +44,66 @@ describe('useProgress hook', () => {
   it('should not exceed maxProgress if duration is longer than given duration', () => {
     const duration = 15000;
     const maxProgress = 90;
-    const { result } = renderHook(() =>
-      useProgress(duration, 100, maxProgress)
-    );
+    const { result } = renderHook(() => useProgress({ duration, maxProgress }));
 
     act(() => {
       result.current.startProgress();
       jest.advanceTimersByTime(duration);
     });
 
-    expect(result.current.progress).toBe(maxProgress);
+    expect(Math.round(result.current.progress)).toBe(maxProgress);
 
     act(() => {
       jest.advanceTimersByTime(5000);
     });
 
     expect(result.current.progress).toBe(maxProgress);
+  });
+
+  it('should slow down progress at breakpoints considering the breakpoint margin', () => {
+    const duration = 1000;
+    const intervalTime = 10;
+    const maxProgress = 90;
+    const breakpoints = [45];
+    const breakpointMargin = 5;
+    const normalIncrement = maxProgress / (duration / intervalTime);
+    const halvedIncrement = normalIncrement / 2;
+
+    const intervalsToReachBreakpoint =
+      (breakpoints[0] - breakpointMargin) / normalIncrement;
+
+    const { result } = renderHook(() =>
+      useProgress({
+        duration,
+        intervalTime,
+        maxProgress,
+        breakpoints,
+        breakpointMargin,
+      })
+    );
+
+    act(() => {
+      result.current.startProgress();
+    });
+
+    // get to breakpoint
+    act(() => {
+      jest.advanceTimersByTime(
+        Math.round(intervalsToReachBreakpoint * intervalTime)
+      );
+    });
+
+    const progressAtBreakpoint = result.current.progress;
+
+    act(() => {
+      jest.advanceTimersByTime(10);
+    });
+
+    const progressPastBreakpoint = result.current.progress;
+
+    expect(progressPastBreakpoint - progressAtBreakpoint).toBeCloseTo(
+      halvedIncrement,
+      1
+    );
   });
 });
