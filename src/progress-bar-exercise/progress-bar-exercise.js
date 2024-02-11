@@ -1,4 +1,5 @@
 import Exercise from '../core/exercise';
+import { useFakeRequest } from '../hooks';
 
 const ProgressBarExercise = () => {
   return (
@@ -17,5 +18,22 @@ export default ProgressBarExercise;
 // ----------------------------------------------------------------------------------
 
 const Solution = () => {
-  return <div>Add solution here</div>;
+  const { startRequest, completeRequest, isLoading, data } = useFakeRequest(
+    {
+      data: {
+        message: 'Hello, World!',
+      },
+    },
+    2000
+  );
+
+  return (
+    <div>
+      <button onClick={startRequest}>
+        {isLoading ? 'Loading...' : 'Start request'}
+      </button>
+      <button onClick={completeRequest}>Finish request</button>
+      <div>{data?.data?.message}</div>
+    </div>
+  );
 };
