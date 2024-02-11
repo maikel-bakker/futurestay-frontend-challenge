@@ -25,7 +25,7 @@ export function useFakeRequest(fakeData, timeout = 15000) {
       })
       .catch((fetchError) => {
         if (fetchError.message === ABORT_ERROR_MESSAGE) {
-          console.log('Fetch was aborted');
+          console.log('Fetch was aborted'); // for test and review purposes
         } else {
           setError(fetchError);
           setData(null);

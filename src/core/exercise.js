@@ -1,4 +1,4 @@
-const Exercise = ({ solution, specsUrl, title }) => {
+export const Exercise = ({ solution, specsUrl, title }) => {
   return (
     <div className="exercise">
       <h2>{title}</h2>
@@ -16,5 +16,3 @@ const Exercise = ({ solution, specsUrl, title }) => {
     </div>
   );
 };
-
-export default Exercise;

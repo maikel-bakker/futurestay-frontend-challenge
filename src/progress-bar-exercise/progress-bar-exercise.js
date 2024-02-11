@@ -1,4 +1,4 @@
-import Exercise from '../core/exercise';
+import { Button, Exercise } from '../core';
 import { useFakeRequest } from '../hooks';
 
 const ProgressBarExercise = () => {
@@ -29,10 +29,12 @@ const Solution = () => {
 
   return (
     <div>
-      <button onClick={startRequest}>
+      <Button onClick={startRequest} color="green">
         {isLoading ? 'Loading...' : 'Start request'}
-      </button>
-      <button onClick={completeRequest}>Finish request</button>
+      </Button>
+      <Button onClick={completeRequest} color="red">
+        Finish request
+      </Button>
       <div>{data?.data?.message}</div>
     </div>
   );

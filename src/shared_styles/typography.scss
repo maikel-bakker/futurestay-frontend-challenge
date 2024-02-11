@@ -6,11 +6,15 @@ $standard-font: 'Montserrat', sans-serif;
 
 body {
   color: $gray-medium;
-  font-family: $standard-font;
+    font-family: $standard-font;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.25px;
   text-align: left;
+}
+
+button {
+  font-family: $standard-font;
 }
 
 a,
