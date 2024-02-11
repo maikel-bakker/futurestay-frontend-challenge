@@ -20,16 +20,12 @@ describe('createFakeFetch', () => {
     return promise;
   });
 
-  it('should be aborted, rejecting the promise with an error', () => {
+  it('should be aborted, rejecting the promise with an error', async () => {
     const { fetch, abort } = createFakeFetch(data, 15000); // Using the default timeout here
-
-    const promise = fetch.catch((error) => {
-      expect(error.message).toBe(ABORT_ERROR_MESSAGE);
-    });
 
     abort();
     jest.runAllTimers();
 
-    return promise;
+    await expect(fetch).rejects.toThrow(ABORT_ERROR_MESSAGE);
   });
 });

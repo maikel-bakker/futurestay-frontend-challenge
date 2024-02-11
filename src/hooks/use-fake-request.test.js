@@ -21,7 +21,9 @@ describe('useFakeRequest', () => {
       abort: jest.fn(),
     });
 
-    const { result } = renderHook(() => useFakeRequest(fakeData, 1000));
+    const { result } = renderHook(() =>
+      useFakeRequest({ fakeData, duration: 1000 })
+    );
 
     act(() => {
       result.current.startRequest();
@@ -31,19 +33,23 @@ describe('useFakeRequest', () => {
     expect(result.current.data).toBeNull();
     expect(result.current.error).toBeNull();
 
-    // Fast-forward until all timers have been executed
     act(() => {
       jest.runAllTimers();
     });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
+    });
+
+    await waitFor(() => {
       expect(result.current.data).toEqual(fakeData);
+    });
+
+    await waitFor(() => {
       expect(result.current.error).toBeNull();
     });
   });
 
-  // @TODO: debug the console error in this test
   it('handles request abortion correctly', async () => {
     const fakeData = { message: 'Fake data' };
 
@@ -52,26 +58,32 @@ describe('useFakeRequest', () => {
       abort: jest.fn(),
     });
 
-    const { result } = renderHook(() => useFakeRequest(fakeData, 10000));
+    const { result } = renderHook(() =>
+      useFakeRequest({ fakeData, duration: 10000 })
+    );
 
     act(() => {
       result.current.startRequest();
     });
 
-    // Abort the request before the fake fetch is complete
     act(() => {
       result.current.completeRequest();
     });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
-      expect(result.current.data).toEqual(fakeData); // Data should be set by completeRequest
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(fakeData);
+    });
+
+    await waitFor(() => {
       expect(result.current.error).toBeNull();
     });
   });
 
   it('sets error correctly if fetch fails', async () => {
-    // Simulate an error response
     const errorMessage = 'An error occurred';
 
     mockCreateFakeFetch.mockReturnValue({
@@ -79,18 +91,78 @@ describe('useFakeRequest', () => {
       abort: jest.fn(),
     });
 
-    const { result } = renderHook(() => useFakeRequest({}, 1000)); // fakeData is not used by createFakeFetch mock
+    const { result } = renderHook(() =>
+      useFakeRequest({ fakeData: {}, duration: 1000 })
+    );
 
     act(() => {
       result.current.startRequest();
     });
 
-    // Wait for the hook to process the rejected promise
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
+    });
+
+    await waitFor(() => {
       expect(result.current.error).not.toBeNull();
+    });
+
+    await waitFor(() => {
       expect(result.current.error.message).toEqual(errorMessage);
+    });
+
+    await waitFor(() => {
       expect(result.current.data).toBeNull();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+  });
+
+  it('Should call onStart when startRequest is called', async () => {
+    const fakeData = { message: 'Fake data' };
+    const onStart = jest.fn();
+
+    mockCreateFakeFetch.mockReturnValue({
+      fetch: Promise.resolve(fakeData),
+      abort: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useFakeRequest({ fakeData, duration: 1000, onStart })
+    );
+
+    act(() => {
+      result.current.startRequest();
+    });
+
+    expect(onStart).toHaveBeenCalled();
+  });
+
+  it('Should call onComplete when completeRequest is called', async () => {
+    const fakeData = { message: 'Fake data' };
+    const onComplete = jest.fn();
+
+    mockCreateFakeFetch.mockReturnValue({
+      fetch: Promise.resolve(fakeData),
+      abort: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useFakeRequest({ fakeData, duration: 1000, onComplete })
+    );
+
+    act(() => {
+      result.current.startRequest();
+    });
+
+    act(() => {
+      result.current.completeRequest();
+    });
+
+    await waitFor(() => {
+      expect(onComplete).toHaveBeenCalled();
     });
   });
 });

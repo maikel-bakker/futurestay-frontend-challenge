@@ -1,5 +1,5 @@
-import { Button, Exercise } from '../core';
-import { useFakeRequest } from '../hooks';
+import { Button, Exercise, ProgressBar } from '../core';
+import { useFakeRequest, useProgress } from '../hooks';
 
 const ProgressBarExercise = () => {
   return (
@@ -17,24 +17,41 @@ export default ProgressBarExercise;
 
 // ----------------------------------------------------------------------------------
 
+const labels = {
+  loading: 'Loading...',
+  startRequest: 'Start request',
+  finishRequest: 'Finish request',
+};
+
 const Solution = () => {
-  const { startRequest, completeRequest, isLoading, data } = useFakeRequest(
-    {
-      data: {
-        message: 'Hello, World!',
-      },
+  const fakeData = {
+    data: {
+      message: 'Hello, World!',
     },
-    2000
-  );
+  };
+  const duration = 30000; // adjust duration to test different scenarios
+  const { progress, startProgress, completeProgress } = useProgress();
+  const { startRequest, completeRequest, isLoading, data, isCompleted } =
+    useFakeRequest({
+      fakeData,
+      duration,
+      onStart: startProgress,
+      onComplete: completeProgress,
+    });
 
   return (
     <div>
-      <Button onClick={startRequest} color="green">
-        {isLoading ? 'Loading...' : 'Start request'}
-      </Button>
-      <Button onClick={completeRequest} color="red">
-        Finish request
-      </Button>
+      <div className="progress-bar-exercise-header">
+        <Button onClick={startRequest} color="green">
+          {isLoading ? labels.loading : labels.startRequest}
+        </Button>
+        <Button onClick={completeRequest} color="red">
+          {labels.finishRequest}
+        </Button>
+      </div>
+      <div className="progress-bar-exercise-body">
+        <ProgressBar width={progress} shouldDisappear={isCompleted} />
+      </div>
       <div>{data?.data?.message}</div>
     </div>
   );
