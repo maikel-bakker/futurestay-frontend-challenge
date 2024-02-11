@@ -1,0 +1,26 @@
+$height: 60px;
+
+.button {
+  outline: 1px solid $gray;
+  line-height: $height;
+  border-radius: $height / 2;
+  padding: 0 42px;
+  letter-spacing: 1px;
+  transition: outline-width 0.1s ease;
+
+  &:hover {
+    outline-width: 2px;
+  }
+
+  &:active {
+    outline-width: 3px;
+  }
+
+  &.green {
+    outline-color: $green;
+  }
+
+  &.red {
+    outline-color: $red;
+  }
+}

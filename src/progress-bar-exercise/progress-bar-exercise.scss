@@ -1,0 +1,13 @@
+$spacing: 10px;
+
+.progress-bar-exercise {
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacing 0;
+  }
+
+  &-body {
+    margin: $spacing 0;
+  }
+}
